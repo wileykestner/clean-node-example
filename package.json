@@ -1,0 +1,19 @@
+{
+  "name": "CleanNodeExample",
+  "version": "0.0.1",
+  "description": "Clean node app with jasmine specs.",
+  "main": "main.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine-node spec"
+  },
+  "author": "Prairiedogg International Limited",
+  "license": "MIT",
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wileykestner/node_jasmine_sample.git"
+  },
+  "private": true
+}
