@@ -3,33 +3,28 @@ var exports = module.exports = {};
 exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
 
   describe("DishRepositoryContract", function (){
-    var subject, setupCreateFailure, setupFetchFailure;
+    var subject, setupCreateFailure;
 
     beforeEach(function() {
+      setupCreateFailure = dishRepositoryImplementationTestProvider.provideSetupCreateFailure();
       subject = dishRepositoryImplementationTestProvider.provideTestSubject();
     });
 
     describe("createDish", function(){
-      var createSuccess;
-      var capturedCreatedDishIdentifier;
-
-      beforeEach(function(done){
-        capturedCreatedDishIdentifier = null;
-        capturedCreateError = null;
-
-        createSuccess = function(createdDishIdentifier) {
-          capturedCreatedDishIdentifier = createdDishIdentifier;
-          done();
-        };
-
-        subject.createDish("Pad Thai", createSuccess);
-      });
 
       describe("when dish creation succeeds", function (){
-        var fetchSuccess;
-        var capturedDish;
+        var fetchSuccess, capturedDish, createSuccess, capturedCreatedDishIdentifier;
 
         beforeEach(function (done){
+
+          capturedCreatedDishIdentifier = null;
+          createSuccess = function(createdDishIdentifier) {
+            capturedCreatedDishIdentifier = createdDishIdentifier;
+            done();
+          };
+
+          subject.createDish("Pad Thai", createSuccess);
+
           capturedDish = null;
 
           fetchSuccess = function (fetchedDish) {
@@ -43,6 +38,32 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         it("should call `fetchSuccess` with the created dish", function() {
           expect(capturedDish.identifier).toEqual(capturedCreatedDishIdentifier);
           expect(capturedDish.name).toEqual("Pad Thai");
+        });
+      });
+
+      describe("when dish creation fails", function () {
+        var createFailure, capturedCreateError;
+
+        beforeEach(function (done){
+          setupCreateFailure(subject);
+
+          capturedCreateError = null;
+          createFailure = function(createError) {
+            capturedCreateError = createError;
+            done();
+          };
+
+          var nullSuccess = null;
+          subject.createDish("Pad Thai", nullSuccess, createFailure);
+        });
+
+        it("should pass an error to the success function", function () {
+          var expectedError = {
+            code: "com.snacker.errors.dishRepository.createDish.dishCreationException",
+            message: "There was an unspecified error during dish creation."
+          };
+
+          expect(capturedCreateError).toEqual(expectedError);
         });
       });
     });
