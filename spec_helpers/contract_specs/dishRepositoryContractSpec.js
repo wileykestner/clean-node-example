@@ -3,10 +3,10 @@ var exports = module.exports = {};
 exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
 
   describe("DishRepositoryContract", function (){
-    var subject, setupCreateFailure;
+    var subject, simulateCreateFailure;
 
     beforeEach(function() {
-      setupCreateFailure = dishRepositoryImplementationTestProvider.provideSetupCreateFailure();
+      simulateCreateFailure = dishRepositoryImplementationTestProvider.provideSimulateCreateFailure();
       subject = dishRepositoryImplementationTestProvider.provideTestSubject();
     });
 
@@ -45,7 +45,7 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         var createFailure, capturedCreateError;
 
         beforeEach(function (done){
-          setupCreateFailure(subject);
+          simulateCreateFailure(subject);
 
           capturedCreateError = null;
           createFailure = function(createError) {
