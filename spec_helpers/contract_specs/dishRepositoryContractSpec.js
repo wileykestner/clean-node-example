@@ -46,5 +46,42 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         });
       });
     });
+
+    describe("fetchDish", function () {
+      var capturedIdentifier;
+      beforeEach(function () {
+        subject.createDish("Phrik Thai", function (dishIdentifier) {
+          capturedIdentifier = dishIdentifier;
+        });
+      });
+
+      it("should pass the dish to the success function when called with a valid dish identifier", function () {
+        var capturedDish = null;
+        subject.fetchDish(capturedIdentifier, function (dish) {
+          capturedDish = dish;
+        });
+
+        var expectedDish = {
+          identifier: capturedIdentifier,
+          name: "Phrik Thai"
+        };
+
+        expect(capturedDish).toEqual(expectedDish);
+      });
+
+      it("should pass an error to the failure function when called with an invalid dish identifier", function () {
+        var capturedError = null;
+        var unusedSuccess = null;
+        subject.fetchDish(1234, unusedSuccess, function (error) {
+          capturedError = error;
+        });
+
+        var expectedError = {
+          code: "com.snacker.errors.dishRepository.fetchDish.invalidIdentifier",
+          message: "No dish with the identifier '1234' currently exists in this repository."
+        };
+        expect(capturedError).toEqual(expectedError);
+      });
+    });
   });
 };

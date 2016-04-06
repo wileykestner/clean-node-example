@@ -17,10 +17,17 @@ exports.new = function () {
     success(nextAvailableIdentifier);
   }
 
-  function fetchDish (dishIdentifier, success) {
+  function fetchDish (dishIdentifier, success, failure) {
     var dish = this._dishes_by_identifier[dishIdentifier]
     if (dish) {
       success(dish);
+    }
+    else {
+      var invalidIdentifierError = {
+        code: "com.snacker.errors.dishRepository.fetchDish.invalidIdentifier",
+        message: "No dish with the identifier '" + dishIdentifier + "' currently exists in this repository."
+      };
+      failure(invalidIdentifierError);
     }
   }
 };
