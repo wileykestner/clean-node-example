@@ -1,21 +1,46 @@
-var presentDishes = require("../app/presentDishes");
+var PresentDishes = require("../app/PresentDishes");
+var InMemoryDishRepository = require("../spec_helpers/reference_implementations/InMemoryDishRepository");
 
-describe("presentDishes", function () {
-  var subject;
+describe("PresentDishes", function () {
+  var subject, dishRepository;
 
   beforeEach(function () {
-    subject = presentDishes;
+    dishRepository = InMemoryDishRepository.new();
+    var dependencies = {dishRepository: dishRepository}
+    subject = PresentDishes.new(dependencies);
   });
 
-  it("presents a list of dishes to an observer", function () {
-    var presentedDishes = null;
-    var observer = {"didPresentDishes": function (dishes) {
-      presentedDishes = dishes;
-    }};
+  describe("when no dishes have been created", function () {
+    it("presents an empty list of dishes to an observer", function () {
+      var presentedDishes = null;
+      var observer = {"didPresentDishes": function (dishes) {
+        presentedDishes = dishes;
+      }};
 
-    presentDishes.execute(observer);
+      subject.execute(observer);
 
-    var expectedDishes = ["Tom Kha Soup"];
-    expect(presentedDishes).toEqual(expectedDishes);
+      var expectedDishes = [];
+      expect(presentedDishes).toEqual(expectedDishes);
+    });
+  });
+
+  describe("when one dish has been created", function () {
+    beforeEach(function (){
+      var emptySuccess = function(){};
+      var emptyFailure = function(){};
+      dishRepository.createDish("Pad See Ew", emptySuccess, emptyFailure);
+    });
+
+    it("presents a list containing the single created dish to an observer", function () {
+      var presentedDishes = null;
+      var observer = {"didPresentDishes": function (dishes) {
+        presentedDishes = dishes;
+      }};
+
+      subject.execute(observer);
+      var expectedDish = {identifier: 0, name: "Pad See Ew"};
+      var expectedDishes = [expectedDish];
+      expect(presentedDishes).toEqual(expectedDishes);
+    });
   });
 });

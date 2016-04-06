@@ -1,9 +1,13 @@
+//dishRepositoryContractSpec.js
+"use strict";
+
 var exports = module.exports = {};
 
 exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
 
   describe("DishRepositoryContract", function (){
-    var subject, simulateCreateFailure;
+    var subject;
+    var simulateCreateFailure;
 
     beforeEach(function() {
       simulateCreateFailure = dishRepositoryImplementationTestProvider.provideSimulateCreateFailure();
@@ -13,7 +17,10 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
     describe("createDish", function(){
 
       describe("when dish creation succeeds", function (){
-        var fetchSuccess, capturedDish, createSuccess, capturedCreatedDishIdentifier;
+        var fetchSuccess;
+        var capturedDish;
+        var createSuccess;
+        var capturedCreatedDishIdentifier;
 
         beforeEach(function (done){
 
@@ -42,7 +49,8 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
       });
 
       describe("when dish creation fails", function () {
-        var createFailure, capturedCreateError;
+        var createFailure;
+        var capturedCreateError;
 
         beforeEach(function (done){
           simulateCreateFailure(subject);
@@ -63,7 +71,12 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
             message: "There was an unspecified error during dish creation."
           };
 
-          expect(capturedCreateError).toEqual(expectedError);
+          var errorKeyCount = Object.keys(capturedCreateError).length;
+          expect(errorKeyCount).toEqual(3);
+          expect(capturedCreateError.code).toEqual("com.snacker.errors.dishRepository.createDish.dishCreationException");
+          expect(capturedCreateError.message).toEqual("There was an unspecified error during dish creation.");
+          expect(capturedCreateError.underlyingException).toBeDefined();
+          expect(capturedCreateError.underlyingException).not.toBe(null);
         });
       });
     });
@@ -107,7 +120,9 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
 
     describe("removeDish", function () {
         describe("when the dish to remove exists", function (){
-          var capturedIdentifier, capturedRemovedDish, capturedRemoveError;
+          var capturedIdentifier;
+          var capturedRemovedDish;
+          var capturedRemoveError;
 
           beforeEach(function (){
             var nullFailure = null;
@@ -146,7 +161,8 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         });
 
         describe("when the dish to remove does not exist", function (){
-          var capturedRemovedDish, capturedError;
+          var capturedRemovedDish;
+          var capturedError;
 
           beforeEach(function (done){
             capturedRemovedDish = null;
@@ -172,6 +188,48 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
             expect(capturedError).toEqual(expectedError);
           });
         });
+    });
+
+    describe("fetchAllDishes", function () {
+
+      describe("when no dishes have been created", function () {
+        var capturedDishes;
+
+        beforeEach(function (){
+          capturedDishes = null;
+          var success = function (allDishes) {
+            capturedDishes = allDishes;
+          };
+
+          subject.fetchAllDishes(success);
+        });
+
+        it("should succeed with an empty list", function (){
+          expect(capturedDishes).toEqual([]);
+        });
+      });
+
+      describe("when a single dish has been created", function () {
+        var capturedDishes;
+
+        beforeEach(function (){
+          subject.createDish("Spring Rolls", function(){}, function() {});
+
+          capturedDishes = null;
+          var success = function (allDishes) {
+            capturedDishes = allDishes;
+          };
+
+          subject.fetchAllDishes(success);
+        });
+
+        it("should call the success function with a one-element list containing the single dish ", function (){
+          var expectedDish = {identifier: 0, name: "Spring Rolls"};
+          var expectedDishes = [expectedDish];
+
+          expect(capturedDishes).toEqual(expectedDishes);
+        });
+      });
     });
   });
 };
