@@ -104,5 +104,74 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         expect(capturedError).toEqual(expectedError);
       });
     });
+
+    describe("removeDish", function () {
+        describe("when the dish to remove exists", function (){
+          var capturedIdentifier, capturedRemovedDish, capturedRemoveError;
+
+          beforeEach(function (){
+            var nullFailure = null;
+
+            capturedIdentifier = null;
+            var createSuccess = function (dishIdentifier) {
+              capturedIdentifier =  dishIdentifier;
+            };
+
+            capturedRemovedDish = null;
+            var removeSuccess = function (removedDish) {
+              capturedRemovedDish =  removedDish;
+            };
+
+            capturedRemoveError = null;
+            var removeFailure = function (removeError) {
+              capturedRemoveError =  removeError;
+            };
+
+            subject.createDish("Potatoes au Gratin", createSuccess, nullFailure);
+
+            subject.removeDish(capturedIdentifier, removeSuccess, removeFailure);
+          });
+
+          it("should call the success block with the removed dish", function (){
+            var expectedDish = {
+              identifier: capturedIdentifier,
+              name: "Potatoes au Gratin"
+            };
+            expect(capturedRemovedDish).toEqual(expectedDish);
+          });
+
+          it("should not call the failure function", function (){
+            expect(capturedRemoveError).toEqual(null);
+          });
+        });
+
+        describe("when the dish to remove does not exist", function (){
+          var capturedRemovedDish, capturedError;
+
+          beforeEach(function (done){
+            capturedRemovedDish = null;
+            var removeSuccess = function (removedDish) {
+              capturedRemovedDish = removedDish;
+              done();
+            };
+
+            capturedError = null;
+            var removeFailure = function (error) {
+              capturedError = error;
+              done();
+            };
+
+            subject.removeDish(1234, removeSuccess, removeFailure);
+          });
+
+          it("should call the failure block with an error", function (){
+            var expectedError = {
+              code: "com.snacker.errors.dishRepository.removeDish.invalidIdentifier",
+              message: "Cannot remove dish with the identifier '1234' because no such dish with that identifier currently exists in this repository."
+            };
+            expect(capturedError).toEqual(expectedError);
+          });
+        });
+    });
   });
 };
