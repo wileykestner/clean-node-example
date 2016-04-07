@@ -1,6 +1,7 @@
 //dishRepositoryContractSpec.js
 "use strict";
 
+
 var exports = module.exports = {};
 
 exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
@@ -15,7 +16,6 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         });
 
         describe("createDish", function(){
-
             describe("when dish creation succeeds", function (){
                 var fetchSuccess;
                 var capturedDish;
