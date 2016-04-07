@@ -1,5 +1,5 @@
 var PresentDishes = require("../app/PresentDishes");
-var InMemoryDishRepository = require("../spec_helpers/reference_implementations/InMemoryDishRepository");
+var InMemoryDishRepository = require("../specHelpers/referenceImplementations/InMemoryDishRepository");
 
 describe("PresentDishes", function () {
   var subject, dishRepository;

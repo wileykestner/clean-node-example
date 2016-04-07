@@ -1,5 +1,5 @@
-var dishRepositoryContractSpec = require("../spec_helpers/contract_specs/dishRepositoryContractSpec");
-var InMemoryDishRepository = require("../spec_helpers/reference_implementations/InMemoryDishRepository");
+var dishRepositoryContractSpec = require("../specHelpers/contractSpecs/DishRepositoryContractSpec");
+var InMemoryDishRepository = require("../specHelpers/referenceImplementations/InMemoryDishRepository");
 
 var dishRepositoryImplementationTestProvider = {
   provideTestSubject: function () {
