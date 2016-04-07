@@ -15,7 +15,7 @@ describe("PresentDishes", function () {
         subject = PresentDishes.new(dependencies);
     });
 
-    describe("execute", function (){
+    describe("execute", function () {
         describe("when no dishes have been created", function () {
             it("presents an empty list of dishes to an observer", function () {
                 var presentedDishes = null;
