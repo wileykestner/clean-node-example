@@ -190,7 +190,6 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
         });
 
         describe("fetchAllDishes", function () {
-
             describe("when no dishes have been created", function () {
                 var capturedDishes;
 
