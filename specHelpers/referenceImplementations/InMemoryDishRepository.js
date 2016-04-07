@@ -4,13 +4,13 @@
 var exports = module.exports = {};
 
 exports.new = function () {
-    var dishesByIdentifier = {};
+    var _dishesByIdentifier = {};
 
-    function createDish(name, success, failure) {
+    function _createDish(name, success, failure) {
         try {
-            var nextAvailableIdentifier = Object.keys(dishesByIdentifier).length;
+            var nextAvailableIdentifier = Object.keys(_dishesByIdentifier).length;
             var newDish = {identifier: nextAvailableIdentifier, name: name};
-            dishesByIdentifier[nextAvailableIdentifier] = newDish;
+            _dishesByIdentifier[nextAvailableIdentifier] = newDish;
             success(nextAvailableIdentifier);
         } catch (exception) {
             var error = {
@@ -22,8 +22,8 @@ exports.new = function () {
         }
     }
 
-    function fetchDish(dishIdentifier, success, failure) {
-        var dish = dishesByIdentifier[dishIdentifier];
+    function _fetchDish(dishIdentifier, success, failure) {
+        var dish = _dishesByIdentifier[dishIdentifier];
         if (dish) {
             success(dish);
         } else {
@@ -35,24 +35,24 @@ exports.new = function () {
         }
     }
 
-    function fetchAllDishes(success) {
-        var keys = Object.keys(dishesByIdentifier);
+    function _fetchAllDishes(success) {
+        var keys = Object.keys(_dishesByIdentifier);
         var sortedKeys = keys.sort(function(a, b) { return a - b; });
 
         var allDishes = [];
         for (var i = 0; i < sortedKeys.length; i++) {
             var key = sortedKeys[i];
-            var dish = dishesByIdentifier[key];
+            var dish = _dishesByIdentifier[key];
             allDishes.push(dish);
         }
 
         success(allDishes);
     }
 
-    function removeDish(dishIdentifier, success, failure) {
-        var dishToRemove = dishesByIdentifier[dishIdentifier];
+    function _removeDish(dishIdentifier, success, failure) {
+        var dishToRemove = _dishesByIdentifier[dishIdentifier];
         if (dishToRemove) {
-            delete dishesByIdentifier[dishIdentifier];
+            delete _dishesByIdentifier[dishIdentifier];
 
             success(dishToRemove);
         } else {
@@ -65,10 +65,10 @@ exports.new = function () {
     }
 
     return {
-        createDish: createDish,
-        fetchDish: fetchDish,
-        fetchAllDishes: fetchAllDishes,
-        removeDish: removeDish,
-        dishesByIdentifier: dishesByIdentifier
+        createDish: _createDish,
+        fetchDish: _fetchDish,
+        fetchAllDishes: _fetchAllDishes,
+        removeDish: _removeDish,
+        dishesByIdentifier: _dishesByIdentifier
     };
 };
