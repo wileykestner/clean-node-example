@@ -5,7 +5,7 @@
 var exports = module.exports = {};
 
 exports.new = function (dependencies) {
-    var dishRepository = dependencies.dishRepository;
+    var _dishRepository = dependencies.dishRepository;
 
     function _execute(dishProperties, observer) {
         var dishName = dishProperties.name;
@@ -13,7 +13,7 @@ exports.new = function (dependencies) {
         var success = function (dishIdentifier) {
             observer.didCreateDishWithIdentifier(dishIdentifier);
         };
-        dishRepository.createDish(dishName, success);
+        _dishRepository.createDish(dishName, success);
     }
 
     return {
