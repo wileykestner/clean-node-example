@@ -1,18 +1,20 @@
 // PresentDishes.js
+"use strict";
+
 
 var exports = module.exports = {};
 
 exports.new = function (dependencies) {
-  var dishRepository =  dependencies.dishRepository;
+    var dishRepository = dependencies.dishRepository;
 
-  function execute (observer) {
-    var success = function (allDishes) {
-        observer.didPresentDishes(allDishes);
+    function execute(observer) {
+        var success = function (allDishes) {
+            observer.didPresentDishes(allDishes);
+        };
+        dishRepository.fetchAllDishes(success);
+    }
+
+    return {
+        execute: execute
     };
-    dishRepository.fetchAllDishes(success);
-  }
-
-  return {
-    execute: execute
-  };
 };
