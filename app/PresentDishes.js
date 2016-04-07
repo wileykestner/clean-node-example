@@ -5,13 +5,13 @@
 var exports = module.exports = {};
 
 exports.new = function (dependencies) {
-    var dishRepository = dependencies.dishRepository;
+    var _dishRepository = dependencies.dishRepository;
 
     function _execute(observer) {
         var success = function (allDishes) {
             observer.didPresentDishes(allDishes);
         };
-        dishRepository.fetchAllDishes(success);
+        _dishRepository.fetchAllDishes(success);
     }
 
     return {
