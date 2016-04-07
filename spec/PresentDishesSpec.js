@@ -11,7 +11,7 @@ describe("PresentDishes", function () {
 
     beforeEach(function () {
         dishRepository = InMemoryDishRepository.new();
-        var dependencies = {dishRepository: dishRepository}
+        var dependencies = {dishRepository: dishRepository};
         subject = PresentDishes.new(dependencies);
     });
 
