@@ -14,9 +14,17 @@ exports.new = function () {
         success(nextAvailableIdentifier);
     }
 
-    function _fetchDishCategory(dishCategoryIdentifier, success) {
+    function _fetchDishCategory(dishCategoryIdentifier, success, failure) {
         var dishCategory = _dishCategoriesByIdentifier[dishCategoryIdentifier];
-        success(dishCategory);
+        if (dishCategory) {
+            success(dishCategory);
+        } else {
+            var error = {
+                code: "com.snacker.errors.DishCategoryRepository.fetchDishCategory.invalidIdentifier",
+                message: "No dish category with the identifier '" + dishCategoryIdentifier + "' currently exists in the dish category repository."
+            };
+            failure(error);
+        }
     }
 
     return {

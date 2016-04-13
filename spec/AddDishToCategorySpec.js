@@ -33,58 +33,98 @@ describe("AddDishToCategory", function () {
         var dish;
         var dishCategory;
 
-        beforeEach(function () {
-            dishIdentifier = null;
-            dishRepository.createDish("Pad Thai", function (createdDishIdentifier) {
-                dishIdentifier = createdDishIdentifier;
+        describe("when both the dish and the dish category exist", function (){
+            beforeEach(function () {
+                dishIdentifier = null;
+                dishRepository.createDish("Pad Thai", function (createdDishIdentifier) {
+                    dishIdentifier = createdDishIdentifier;
+                });
+
+                dishCategoryIdentifier = null;
+                dishCategoryRepository.create("Vegetarian", function (createdDishCategoryIdentifier) {
+                    dishCategoryIdentifier = createdDishCategoryIdentifier;
+                });
+
+                dish = null;
+                dishCategory = null;
+                observer = {didAddDishToCategory: function (addedDish, addedDishCategory) {
+                    dish = addedDish;
+                    dishCategory = addedDishCategory;
+                }};
+
+                var identifiers = {
+                    "dishIdentifier": dishIdentifier,
+                    "dishCategoryIdentifier": dishCategoryIdentifier,
+                };
+                subject.execute(identifiers, observer);
             });
 
-            dishCategoryIdentifier = null;
-            dishCategoryRepository.create("Vegetarian", function (createdDishCategoryIdentifier) {
-                dishCategoryIdentifier = createdDishCategoryIdentifier;
+            it("should notify the observer with the dish", function () {
+                var expectedDish = {
+                    identifier: dishIdentifier,
+                    name: "Pad Thai",
+                };
+
+                expect(dish).toEqual(expectedDish);
             });
 
-            dish = null;
-            dishCategory = null;
-            observer = {didAddDishToCategory: function (addedDish, addedDishCategory) {
-                dish = addedDish;
-                dishCategory = addedDishCategory;
-            }};
+            it("should notify the observer with the dish category", function () {
+                var expectedDishCategory = {
+                    identifier: dishCategoryIdentifier,
+                    name: "Vegetarian",
+                };
 
-            var identifiers = {
-                "dishIdentifier": dishIdentifier,
-                "dishCategoryIdentifier": dishCategoryIdentifier,
-            };
-            subject.execute(identifiers, observer);
+                expect(dishCategory).toEqual(expectedDishCategory);
+            });
+
+            it("should store the relationship in the dishToDishCategoryRelationshipRepository", function (){
+                var dishIdentifiersInCategory = null;
+                var success = function (dishIdentifiers) {
+                    dishIdentifiersInCategory = dishIdentifiers;
+                };
+                dishToDishCategoryRelationshipRepository.fetchDishIdentifiersForDishCategoryIdentifier(dishCategoryIdentifier, success);
+
+                var expectedDishIdentifiers = [dishIdentifier];
+                expect(dishIdentifiersInCategory).toEqual(expectedDishIdentifiers);
+            });
         });
 
-        it("should notify the observer with the dish", function () {
-            var expectedDish = {
-                identifier: dishIdentifier,
-                name: "Pad Thai",
-            };
+        describe("when the dish exists, but the dish category doesn't", function () {
+            var error;
+            var successCallbackCalled;
 
-            expect(dish).toEqual(expectedDish);
-        });
+            beforeEach(function () {
+                dishIdentifier = null;
+                dishRepository.createDish("Pad Thai", function (createdDishIdentifier) {
+                    dishIdentifier = createdDishIdentifier;
+                });
 
-        it("should notify the observer with the dish category", function () {
-            var expectedDishCategory = {
-                identifier: dishCategoryIdentifier,
-                name: "Vegetarian",
-            };
+                successCallbackCalled = false;
+                error = null;
+                observer = {
+                    didAddDishToCategory: function (addedDish, addedDishCategory) {
+                        successCallbackCalled = true;
+                    },
+                    didFailToAddDishToCategory: function (addError) {
+                        error = addError;
+                    },
+                };
 
-            expect(dishCategory).toEqual(expectedDishCategory);
-        });
+                var identifiers = {
+                    "dishIdentifier": dishIdentifier,
+                    "dishCategoryIdentifier": 27,
+                };
+                subject.execute(identifiers, observer);
+            });
 
-        it("should store the relationship in the dishToDishCategoryRelationshipRepository", function (){
-            var dishIdentifiersInCategory = null;
-            var success = function (dishIdentifiers) {
-                dishIdentifiersInCategory = dishIdentifiers;
-            };
-            dishToDishCategoryRelationshipRepository.fetchDishIdentifiersForDishCategoryIdentifier(dishCategoryIdentifier, success);
+            it("should call the failure callback with an error", function () {
+                var expectedError = {
+                    code: "com.snacker.errors.AddDishToCategory.execute.invalidIdentifier",
+                    message: "No dish category with the identifier '27' currently exists in the dish category repository."
+                };
 
-            var expectedDishIdentifiers = [dishIdentifier];
-            expect(dishIdentifiersInCategory).toEqual(expectedDishIdentifiers);
+                expect(error).toEqual(expectedError);
+            });
         });
     });
 });
