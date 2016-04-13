@@ -1,12 +1,12 @@
-//AddDishToCategorySpec.js
+//AddDishToDishCategorySpec.js
 "use strict";
 
 var InMemoryDishToDishCategoryRelationshipRepository = require("../specHelpers/referenceImplementations/InMemoryDishToDishCategoryRelationshipRepository");
 var InMemoryDishCategoryRepository = require("../specHelpers/referenceImplementations/InMemoryDishCategoryRepository");
 var InMemoryDishRepository = require("../specHelpers/referenceImplementations/InMemoryDishRepository");
-var AddDishToCategory = require("../app/AddDishToCategory.js");
+var AddDishToDishCategory = require("../app/AddDishToDishCategory");
 
-describe("AddDishToCategory", function () {
+describe("AddDishToDishCategory", function () {
     var subject;
     var dishRepository;
     var dishCategoryRepository;
@@ -23,7 +23,7 @@ describe("AddDishToCategory", function () {
             dishToDishCategoryRelationshipRepository: dishToDishCategoryRelationshipRepository
         };
 
-        subject = AddDishToCategory.new(dependencies);
+        subject = AddDishToDishCategory.new(dependencies);
     });
 
     describe("execute", function () {

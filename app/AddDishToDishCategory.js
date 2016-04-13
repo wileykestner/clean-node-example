@@ -1,4 +1,4 @@
-// AddDishToCategory.js
+// AddDishToDishCategory.js
 "use strict";
 
 
