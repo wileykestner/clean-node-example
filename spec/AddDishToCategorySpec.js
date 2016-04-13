@@ -125,6 +125,52 @@ describe("AddDishToCategory", function () {
 
                 expect(error).toEqual(expectedError);
             });
+
+            it("should not call the success callback", function (){
+                expect(successCallbackCalled).toEqual(false);
+            });
+        });
+
+        describe("when the dish category exists, but the dish doesn't", function () {
+            var error;
+            var successCallbackCalled;
+
+            beforeEach(function () {
+                dishCategoryIdentifier = null;
+                dishCategoryRepository.create("Vegetarian", function (createdDishCategoryIdentifier) {
+                    dishCategoryIdentifier = createdDishCategoryIdentifier;
+                });
+
+                successCallbackCalled = false;
+                error = null;
+                observer = {
+                    didAddDishToCategory: function (addedDish, addedDishCategory) {
+                        successCallbackCalled = true;
+                    },
+                    didFailToAddDishToCategory: function (addError) {
+                        error = addError;
+                    },
+                };
+
+                var identifiers = {
+                    "dishIdentifier": 43,
+                    "dishCategoryIdentifier": dishCategoryIdentifier,
+                };
+                subject.execute(identifiers, observer);
+            });
+
+            it("should call the failure callback with an error", function () {
+                var expectedError = {
+                    code: "com.snacker.errors.AddDishToCategory.execute.invalidIdentifier",
+                    message: "No dish with the identifier '43' currently exists in the dish repository."
+                };
+
+                expect(error).toEqual(expectedError);
+            });
+
+            it("should not call the success callback", function (){
+                expect(successCallbackCalled).toEqual(false);
+            });
         });
     });
 });

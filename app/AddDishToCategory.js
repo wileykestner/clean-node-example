@@ -12,13 +12,12 @@ exports.new = function (dependencies) {
     function _execute(identifiers, observer) {
         var dishIdentifier = identifiers.dishIdentifier;
         var dishCategoryIdentifier = identifiers.dishCategoryIdentifier;
-        _dishRepository.fetchDish(dishIdentifier, function (dish) {
+        var fetchDishSuccess = function (dish) {
             var fetchDishCategorySuccess = function (dishCategory) {
                 _dishToDishCategoryRelationshipRepository.create(identifiers, function () {
                     observer.didAddDishToCategory(dish, dishCategory);
                 });
             };
-
             var fetchDishCategoryFailure = function (repositoryError) {
                 var error = {
                     code: "com.snacker.errors.AddDishToCategory.execute.invalidIdentifier",
@@ -27,7 +26,16 @@ exports.new = function (dependencies) {
                 observer.didFailToAddDishToCategory(error);
             };
             _dishCategoryRepository.fetch(dishCategoryIdentifier, fetchDishCategorySuccess, fetchDishCategoryFailure);
-        });
+        };
+        var fetchDishFailure = function (error) {
+            var error = {
+                code: "com.snacker.errors.AddDishToCategory.execute.invalidIdentifier",
+                message: "No dish with the identifier '" + dishIdentifier + "' currently exists in the dish repository."
+            };
+            observer.didFailToAddDishToCategory(error);
+        };
+
+        _dishRepository.fetchDish(dishIdentifier, fetchDishSuccess, fetchDishFailure);
     }
 
     return {
