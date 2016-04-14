@@ -115,6 +115,14 @@ exports.runContractSpecs = function (dishRepositoryImplementationTestProvider) {
                 };
                 expect(capturedError).toEqual(expectedError);
             });
+
+            it("should not throw a runtime exception if no success block is passed in", function (){
+                expect(function (){subject.fetchDish(capturedIdentifier)}).not.toThrow();
+            });
+
+            it("should not throw a runtime exception if no failure block is passed in", function (){
+                expect(function (){subject.fetchDish(1234, null)}).not.toThrow();
+            });
         });
 
         describe("removeDish", function () {

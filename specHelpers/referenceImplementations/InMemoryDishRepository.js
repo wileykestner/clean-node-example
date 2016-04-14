@@ -26,13 +26,17 @@ exports.new = function () {
     function _fetchDish(dishIdentifier, success, failure) {
         var dish = _dishesByIdentifier[dishIdentifier];
         if (dish) {
-            success(dish);
+            if (success) {
+                success(dish);
+            }
         } else {
-            var invalidIdentifierError = {
-                code: "com.snacker.errors.dishRepository.fetchDish.invalidIdentifier",
-                message: "No dish with the identifier '" + dishIdentifier + "' currently exists in this repository."
-            };
-            failure(invalidIdentifierError);
+            if (failure) {
+                var invalidIdentifierError = {
+                    code: "com.snacker.errors.dishRepository.fetchDish.invalidIdentifier",
+                    message: "No dish with the identifier '" + dishIdentifier + "' currently exists in this repository."
+                };
+                failure(invalidIdentifierError);
+            }
         }
     }
 

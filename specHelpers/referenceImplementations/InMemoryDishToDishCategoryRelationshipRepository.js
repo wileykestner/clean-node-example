@@ -15,7 +15,9 @@ exports.new = function () {
         }
         _categoryIdentifiersToDishIdentifiers[dishCategoryIdentifier].push(dishIdentifier);
 
-        success();
+        if (success) {
+            success();
+        }
     }
 
     function _fetchDishIdentifiersForDishCategoryIdentifier(dishCategoryIdentifier, success){
