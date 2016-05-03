@@ -9,11 +9,22 @@ exports.new = function (dependencies) {
 
     function _execute(dishProperties, observer) {
         var dishName = dishProperties.name;
+        if (dishName) {
+            var success = function (dishIdentifier) {
+                observer.didCreateDishWithIdentifier(dishIdentifier);
+            };
+            _dishRepository.createDish(dishName, success);
+        } else {
+            var error = {
+                code: 'com.snacker.errors.CreateDish.execute.emptyName',
+                message: 'Creating a dish requires a valid name, the provided name was an empty string.'
+            };
+            observer.didFailToCreateDishWithIdentifier(error);
+        }
 
-        var success = function (dishIdentifier) {
-            observer.didCreateDishWithIdentifier(dishIdentifier);
-        };
-        _dishRepository.createDish(dishName, success);
+
+
+
     }
 
     return {
