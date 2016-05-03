@@ -66,9 +66,44 @@ describe("CreateDish", function () {
             });
         });
 
-        describe("with an invalid dish name", function () {
+        describe("with a zero-length string dish name", function () {
             beforeEach(function (){
                 subject.execute({name: ""}, observer);
+            });
+
+            it("should notify the observer with the identifier for the created dish", function () {
+                var expectedError = {
+                    code: "com.snacker.errors.CreateDish.execute.emptyName",
+                    message: "Creating a dish requires a valid name, the provided name was an empty string."
+                };
+                expect(createDishError).toEqual(expectedError);
+            });
+
+            it("should not call the success function on the observer", function (){
+                expect(createdDishSuccessCalled).toBe(false);
+            });
+
+            it("should not store the dish in the repository", function () {
+                var capturedError = null;
+                var success = null;
+                var failure = function (error){
+                    capturedError = error;
+                };
+
+                dishRepository.fetchDish(createdDishIdentifier, null, failure);
+
+                var expectedError = {
+                    code: "com.snacker.errors.dishRepository.fetchDish.invalidIdentifier",
+                    message: "No dish with the identifier 'null' currently exists in this repository."
+                };
+
+                expect(capturedError).toEqual(expectedError);
+            });
+        });
+
+        describe("with an empty string as a dish name", function () {
+            beforeEach(function (){
+                subject.execute({name: "   \n\t"}, observer);
             });
 
             it("should notify the observer with the identifier for the created dish", function () {

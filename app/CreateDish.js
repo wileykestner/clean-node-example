@@ -9,6 +9,8 @@ exports.new = function (dependencies) {
 
     function _execute(dishProperties, observer) {
         var dishName = dishProperties.name;
+        dishName = dishName.trim();
+
         if (dishName) {
             var success = function (dishIdentifier) {
                 observer.didCreateDishWithIdentifier(dishIdentifier);
@@ -21,10 +23,6 @@ exports.new = function (dependencies) {
             };
             observer.didFailToCreateDishWithIdentifier(error);
         }
-
-
-
-
     }
 
     return {
